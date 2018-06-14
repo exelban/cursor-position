@@ -19,7 +19,9 @@
     "div",
     "web",
     "module",
-    "component"
+    "detect",
+    "browser",
+    "mobile"
   ],
   "author": {
     "name": "Serhiy Mytrovtsiy",
