@@ -1,6 +1,15 @@
 // @flow
 
-const getCursorPosition = ({ event, element }: Object) => {
+type options = {
+  event?: MouseEvent,
+  element?: HTMLElement,
+}
+type response = {
+  x: number,
+  y: number,
+}
+
+const GetCursorPosition = ({ event, element }: options): response => {
   if (!window || !document) throw new Error('[Cursor-pointer] window or document not defined')
   if (!event) ({ event } = window)
 
@@ -28,7 +37,8 @@ const getCursorPosition = ({ event, element }: Object) => {
     y -= element.offsetTop
 
     if (element.offsetParent) {
-      let obj = element.offsetParent
+      // $FlowFixMe
+      let obj: HTMLElement = element.offsetParent
       while (obj) {
         x -= obj.offsetLeft
         y -= obj.offsetTop
@@ -44,4 +54,4 @@ const getCursorPosition = ({ event, element }: Object) => {
   }
 }
 
-export default getCursorPosition
+export default GetCursorPosition

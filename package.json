@@ -5,7 +5,7 @@
   "description": "Simple module for getting the current mouse position in element or window.",
   "main": "lib/index.min.js",
   "scripts": {
-    "build": "rm -rf lib && mkdir lib && babel ./src/index.js -o ./lib/index.min.js"
+    "build": "babel ./src/index.js -o ./lib/index.min.js"
   },
   "keywords": [
     "cursor",
