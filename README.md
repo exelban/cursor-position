@@ -41,6 +41,13 @@ document.setEventListener('mousemove', (e) => {
 **event** | **MouseEvent** | **Mouse event with contains cursor position** | **If event not provided scritp will take event object from window.**
 **element** | **Node** | **HTML node element** | **Normally script will return absolute position of mouse in window. But if You want to get mouse position in specific element, just push this component to this option.**
 
+### Response
+```
+{
+  x number,
+  y number,
+}
+```
 
 ## What's new
 ### v0.0.1
