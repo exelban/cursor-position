@@ -50,7 +50,7 @@ document.setEventListener('mousemove', (e) => {
 ```
 
 ## What's new
-### v0.0.1
+### v0.0.3
     - first release;
 
 ## License
