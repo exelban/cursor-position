@@ -1,6 +1,7 @@
 # cursor-position
 
-[![Download Count](https://img.shields.io/npm/dm/cursor-position.svg?style=flat-square)](http://www.npmjs.com/package/cursor-position)
+
+[![Download Count](https://img.shields.io/npm/dt/cursor-position.svg?style=flat-square)](http://www.npmjs.com/package/cursor-position)
 
 [![Demo image](https://s3.eu-central-1.amazonaws.com/serhiy/Github_repo/cursor-position/cursor-position.png)](https://exelban.github.io/cursor-position)
 
