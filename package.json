@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "mocha -r ts-node/register tests/*.spec.ts"
+    "test": "mocha -r ts-node/register src/test.ts"
   },
   "keywords": [
     "cursor",
@@ -49,6 +49,7 @@
     "jsdom": "^13.1.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^5.2.0",
+    "mocha.parallel": "^0.15.6",
     "ts-node": "^7.0.1",
     "typescript": "^3.2.2"
   }

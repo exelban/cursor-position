@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+<style type="text/css">
+  .test {
+    width: 3000px;
+    height: 300px;
+    background: red;
+  }
+</style>
+</head>
+<body>
+
+<div class="test">
+
+</div>
+
+</body>
+
+<script>
+
+  const element = document.getElementsByClassName("test")[0]
+  element.addEventListener('click', function (e) {
+    console.log(e.clientX, document.body.scrollLeft)
+  })
+
+</script>
+
+</html>

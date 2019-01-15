@@ -1,62 +1,49 @@
-type options = {
+interface options {
     event?: Event | MouseEvent | TouchEvent,
-    element?: HTMLElement,
     absolute?: boolean,
-    visible?: boolean,
 }
+
 type cursorPosition = {
     x: number,
     y: number,
 }
 
-const isMouseEvent = (e: Event | MouseEvent | TouchEvent): boolean => e instanceof MouseEvent
-const isTouchEvent = (e: Event | MouseEvent | TouchEvent): boolean => e instanceof TouchEvent
-
 // if event not provided, function will search event in window
-// if element not provided, function will return absolute cursor position
-const GetCursorPosition = ({ event, element, absolute, visible }: options): cursorPosition => {
-    let x = 0
-    let y = 0
-
+// if element not provided, function will return cursor position from body
+// if absolute is false, function will return cursor position from parent element
+const GetCursorPosition = (opt?: options): cursorPosition => {
     if (!document) throw new Error('document is not defined')
     if (!window) throw new Error('window is not defined')
-    if (!event) ({ event } = window)
-    if (!event) throw new Error('event is not defined')
 
-    switch (true) {
-        case isMouseEvent(event):
-            console.log("mouse event")
-            break
-        case isTouchEvent(event):
-            console.log("touch event")
-            break
-        default:
-            console.log("default event")
-            break
+    let absolute: boolean = true
+    let x: number = 0
+    let y: number = 0
+    let event = window.event || undefined
+
+    if (opt) {
+        event = opt.event
+        absolute = opt.absolute || true
     }
 
-    // if (event instanceof MouseEvent) {
-    //     if (event.pageX || event.pageY) {
-    //         x = event.pageX
-    //         y = event.pageY
-    //     } else if (event.clientX || event.clientY) {
-    //         x = event.clientX
-    //         y = event.clientY
-    //     }
-    // } else if (event instanceof TouchEvent) {
-    //     if (event.touches) {
-    //         x = event.touches[0].clientX
-    //         y = event.touches[0].clientY
-    //     }
-    // } else {
-    //     throw new Error('[cursor-pointer]: event type error')
-    // }
-    //
-    // if (document && document.body && document.documentElement) {
-    //     x += document.body.scrollLeft + document.documentElement.scrollLeft
-    //     y += document.body.scrollTop + document.documentElement.scrollTop
-    // }
-    //
+    if (!event) throw new Error('event is not defined')
+
+    if (event instanceof MouseEvent) {
+        x = event.clientX
+        y = event.clientY
+    }
+    if (event instanceof TouchEvent) {
+        if (!event.touches[0]) {
+            throw new Error('touch is not find')
+        }
+        x = event.touches[0].clientX
+        y = event.touches[0].clientY
+    }
+
+    if (absolute) {
+        x += window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0
+        y += window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0
+    }
+
     // if (element) {
     //     x -= element.offsetLeft
     //     y -= element.offsetTop
