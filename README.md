@@ -5,7 +5,7 @@
 
 [![Demo image](https://s3.eu-central-1.amazonaws.com/serhiy/Github_repo/cursor-position/cursor-position.png)](https://exelban.github.io/cursor-position)
 
-Simple module for getting the current mouse position in element or window.
+Simple module for getting click/touch position in element or window.
 
 
 ## Install
@@ -18,14 +18,12 @@ npm install cursor-position --save
 ```
 
 ## Usage
-Script has only one function: ```GetCursorPosition(options)```.  
+Library has only one function: ```GetCursorPosition(options)```
 ```js
 import GetCursorPosition from 'cursor-position'
 
-document.setEventListener('mousemove', (e) => {
-  const {x, y} = GetCursorPosition({
-    event: e
-  })
+document.setEventListener('mousemove', () => {
+  const {x, y} = GetCursorPosition()
   console.log(x, y)
 })
 ```
@@ -33,26 +31,35 @@ document.setEventListener('mousemove', (e) => {
 ### Options
 ```
 {
-  event MouseEvent
-  element Node
+    event?: MouseEvent | TouchEvent
+    absolute?: boolean
+    scroll?: boolean
 }
 ```
-**Name** | **Type** | **Description** | **Usage**
---- | --- | --- | ---
-**event** | **MouseEvent** | **Mouse event with contains cursor position** | **If event not provided scritp will take event object from window.**
-**element** | **Node** | **HTML node element** | **Normally script will return absolute position of mouse in window. But if You want to get mouse position in specific element, just push this component to this option.**
+**Name** | **Type** | **Required** | **Default** | **Description**
+--- | --- | --- | --- | ---
+**event** | MouseEvent TouchEvent | No | window.event | Click event
+**absolute** | Boolean | No | true | Determine if position must be calculated from body or from parent element
+**scroll** | Boolean | No | false | Determine if position must include scroll value
 
 ### Response
 ```
 {
-  x number,
-  y number,
+  x number
+  y number
 }
 ```
 
 ## What's new
+### v1.0.0 (BREAKING CHANGES)
+    - rewrited library in typescript
+    - removed eslint
+    - removed @flow
+    - changed options
+    - added some tests (in progress)
+    
 ### v0.0.3
-    - first release;
+    - first release
 
 ## License
 [Apache License 2.0](https://github.com/exelban/cursor-position/blob/master/LICENSE)
