@@ -51,6 +51,9 @@ document.setEventListener('mousemove', () => {
 ```
 
 ## What's new
+### v1.0.1
+    - package.json fixed
+    
 ### v1.0.0 (BREAKING CHANGES)
     - rewrited library in typescript
     - removed eslint

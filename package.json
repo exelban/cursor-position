@@ -1,9 +1,9 @@
 {
   "name": "cursor-position",
   "title": "cursor-position",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple module for getting the current mouse position in element or window.",
-  "main": "lib/index.min.js",
+  "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib"
