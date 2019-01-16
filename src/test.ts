@@ -5,7 +5,8 @@ import { JSDOM } from 'jsdom'
 
 declare var global: any
 
-const { window } = new JSDOM('<!doctype html><html><body><div id="mockElement"></div></body></html>')
+const { window } = new JSDOM('<!doctype html><html><body><div id="parentMockElement"><div id="mockElement"></div></div></body></html>')
+const parent = window.document.getElementById("parentMockElement")!
 const div = window.document.getElementById("mockElement")!
 let mouseEvent: any = undefined
 let touchEvent: any = undefined
@@ -15,6 +16,8 @@ const setDOM = () => {
     global.window = document.defaultView
     global.MouseEvent = window.MouseEvent
     global.TouchEvent = window.TouchEvent
+    global.Element = window.Element
+    global.HTMLElement = window.HTMLElement
 
     Object.defineProperty(global.window, "pageYOffset", {
         value: 0,
@@ -76,10 +79,10 @@ describe('initialization', function() {
     })
 })
 
-describe('functionality', function() {
+describe('absolute + !scroll', function() {
     setDOM()
 
-    it('simple mouse event', () => {
+    it('absolute mouse event', () => {
         const listener = (e: Event) => {
             const {x, y} = GetCursorPosition({ event: e })
             expect(x).equal(mouseEvent.clientX)
@@ -90,7 +93,7 @@ describe('functionality', function() {
         div.removeEventListener("click", listener)
     })
 
-    it('simple touch event', () => {
+    it('absolute touch event', () => {
         touchEvent.touches = [{clientX: 401, clientY: 402}]
         const listener = (e: Event) => {
             const {x, y} = GetCursorPosition({ event: e })
@@ -104,11 +107,11 @@ describe('functionality', function() {
     })
 })
 
-describe('body scroll X', function() {
+describe('absolute + scroll X', function() {
     setDOM()
 
     const listener = (e: Event) => {
-        const {x, y} = GetCursorPosition({ event: e })
+        const {x, y} = GetCursorPosition({ event: e, scroll: true })
         expect(x).equal(mouseEvent.clientX + 400)
         expect(y).equal(mouseEvent.clientY)
     }
@@ -126,22 +129,18 @@ describe('body scroll X', function() {
         global.window.pageXOffset = 0
     })
     it('document.documentElement.scrollLeft', () => {
-        if (div !== null) {
-            global.document.documentElement.scrollLeft = 400
-            div.dispatchEvent(mouseEvent)
-            global.document.documentElement.scrollLeft = 0
-        }
+        global.document.documentElement.scrollLeft = 400
+        div.dispatchEvent(mouseEvent)
+        global.document.documentElement.scrollLeft = 0
     })
     it('document.body.scrollLeft', () => {
-        if (div !== null) {
-            global.document.body.scrollLeft = 400
-            div.dispatchEvent(mouseEvent)
-            global.document.body.scrollLeft = 0
-        }
+        global.document.body.scrollLeft = 400
+        div.dispatchEvent(mouseEvent)
+        global.document.body.scrollLeft = 0
     })
 })
 
-describe('body scroll Y', function() {
+describe('absolute + scroll Y', function() {
     setDOM()
 
     beforeEach(function() {
@@ -152,7 +151,7 @@ describe('body scroll Y', function() {
     })
 
     function listener(e: Event) {
-        const {x, y} = GetCursorPosition({ event: e })
+        const {x, y} = GetCursorPosition({ event: e, scroll: true })
         expect(x).equal(mouseEvent.clientX)
         expect(y).equal(mouseEvent.clientY + 500)
     }
@@ -163,21 +162,59 @@ describe('body scroll Y', function() {
         global.window.pageYOffset = 0
     })
     it('document.documentElement.scrollTop', () => {
-        if (div !== null) {
-            global.document.documentElement.scrollTop = 500
-            div.dispatchEvent(mouseEvent)
-            global.document.documentElement.scrollTop = 0
-        }
+        global.document.documentElement.scrollTop = 500
+        div.dispatchEvent(mouseEvent)
+        global.document.documentElement.scrollTop = 0
     })
     it('document.body.scrollTop', () => {
-        if (div !== null) {
-            global.document.body.scrollTop = 500
-            div.dispatchEvent(mouseEvent)
-            global.document.body.scrollTop = 0
-        }
+        global.document.body.scrollTop = 500
+        div.dispatchEvent(mouseEvent)
+        global.document.body.scrollTop = 0
     })
 })
 
-describe('position from element', function () {
+describe('!absolute + scroll X', function () {
+    setDOM()
 
+    const listener = (e: Event) => {
+        const {x, y} = GetCursorPosition({ event: e, scroll: true, absolute: false })
+        expect(x).equal(mouseEvent.clientX + 600)
+        expect(y).equal(mouseEvent.clientY)
+    }
+
+    before(function() {
+        div.addEventListener("click", listener)
+    })
+    after(function() {
+        div.removeEventListener("click", listener)
+    })
+
+    it('scrollLeft', () => {
+        parent.scrollLeft = 600
+        div.dispatchEvent(mouseEvent)
+        parent.scrollLeft = 0
+    })
+})
+
+describe('!absolute + scroll Y', function () {
+    setDOM()
+
+    const listener = (e: Event) => {
+        const {x, y} = GetCursorPosition({ event: e, scroll: true, absolute: false })
+        expect(x).equal(mouseEvent.clientX)
+        expect(y).equal(mouseEvent.clientY + 600)
+    }
+
+    before(function() {
+        div.addEventListener("click", listener)
+    })
+    after(function() {
+        div.removeEventListener("click", listener)
+    })
+
+    it('scrollLeft', () => {
+        parent.scrollTop = 600
+        div.dispatchEvent(mouseEvent)
+        parent.scrollTop = 0
+    })
 })
