@@ -5,7 +5,7 @@
 
 [![Demo image](https://s3.eu-central-1.amazonaws.com/serhiy/Github_repo/cursor-position/cursor-position.png)](https://exelban.github.io/cursor-position)
 
-Simple module for getting the current mouse position in element or window.
+Simple module for getting click/touch position in element or window.
 
 
 ## Install
