@@ -1,5 +1,5 @@
 interface options {
-    event?: Event | MouseEvent | TouchEvent,
+    event?: Event,
     absolute?: boolean,
     scroll?: boolean,
 }
@@ -9,100 +9,42 @@ type cursorPosition = {
     y: number,
 }
 
-function isTouchEvent(event: any): boolean {
-    if ((window as any).TouchEvent !== undefined) {
-        return event instanceof TouchEvent
-    }
-    return event.touches !== undefined
-}
+const GetCursorPosition = (opt: options = {}): cursorPosition => {
+    if (typeof document === 'undefined') throw new Error('document is not defined')
+    if (typeof window === 'undefined') throw new Error('window is not defined')
 
-const GetCursorPosition = (opt?: options): cursorPosition => {
-    if (!document) throw new Error('document is not defined')
-    if (!window) throw new Error('window is not defined')
-
-    let absolute: boolean = true
-    let scroll: boolean = false
-    let x: number = 0
-    let y: number = 0
-    let event = window.event || undefined
-    let element = undefined
-
-    if (opt) {
-        if (opt.event !== undefined) event = opt.event
-        if (opt.absolute !== undefined) absolute = opt.absolute
-        if (opt.scroll !== undefined) scroll = opt.scroll
-    }
-
+    const { event = window.event, absolute = true, scroll = false } = opt
     if (!event) throw new Error('event is not defined')
-    const touches: TouchList = (event as TouchEvent).touches
 
-    if (event instanceof MouseEvent) {
-        x = event.clientX
-        y = event.clientY
-    }
-    if (isTouchEvent(event) && touches) {
-        if (!touches[0]) {
-            throw new Error('touch is not find')
-        }
-        x = touches[0].clientX
-        y = touches[0].clientY
+    let point: MouseEvent | Touch = event as MouseEvent
+    if ('touches' in event) {
+        const touchEvent = event as TouchEvent
+        const ended = touchEvent.type === 'touchend' || touchEvent.type === 'touchcancel'
+        const touches = ended ? touchEvent.changedTouches : touchEvent.touches
+        if (!touches || !touches[0]) throw new Error('touch is not defined')
+        point = touches[0]
     }
 
-    if (absolute && scroll) {
-        x += window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0
-        y += window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0
-    }
-    else if (!absolute && scroll) {
-        if (!event.target) throw new Error('target is not defined')
-        element = event!.target!
+    let { clientX: x, clientY: y } = point
+    if (typeof x !== 'number' || typeof y !== 'number') throw new Error('event has no cursor coordinates')
 
-        if (element instanceof Element && element instanceof HTMLElement) {
-            x -= element.offsetLeft
-            y -= element.offsetTop
-            if (element.parentElement) {
-                let obj = element.parentElement
-                while (obj) {
-                    if (obj instanceof HTMLElement) {
-                        x -= obj.offsetLeft
-                        y -= obj.offsetTop
-                        if (!obj.parentElement) break
-                        obj = obj.parentElement
-                    }
-                }
-            }
+    if (!absolute) {
+        const element = event.target as Element | null
+        if (!element || typeof element.getBoundingClientRect !== 'function') throw new Error('target element is not defined')
 
-            if (element.parentElement) {
-                let obj: Element | HTMLElement = element.parentElement
-                while (obj) {
-                    if (obj instanceof HTMLElement) {
-                        x += obj.scrollLeft
-                        y += obj.scrollTop
-                        if (obj.scrollLeft || obj.scrollTop || !obj.parentElement) break
-                        obj = obj.parentElement
-                    }
-                }
-            }
+        const rect = element.getBoundingClientRect()
+        x -= rect.left
+        y -= rect.top
+        if (scroll) {
+            x += element.scrollLeft
+            y += element.scrollTop
         }
     }
-    else if (!absolute && !scroll){
-        if (!event.target) throw new Error('target is not defined')
-        element = event!.target!
-
-        if (element instanceof Element && element instanceof HTMLElement) {
-            x -= element.offsetLeft
-            y -= element.offsetTop
-            if (element.parentElement) {
-                let obj = element.parentElement
-                while (obj) {
-                    if (obj instanceof HTMLElement) {
-                        x -= obj.offsetLeft
-                        y -= obj.offsetTop
-                        if (!obj.parentElement) break
-                        obj = obj.parentElement
-                    }
-                }
-            }
-        }
+    else if (scroll) {
+        const view = (event as UIEvent).view || window
+        const doc = view.document
+        x += view.pageXOffset || doc.documentElement.scrollLeft || doc.body.scrollLeft || 0
+        y += view.pageYOffset || doc.documentElement.scrollTop || doc.body.scrollTop || 0
     }
 
     return { x, y }

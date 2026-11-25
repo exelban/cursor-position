@@ -1,7 +1,7 @@
 {
   "name": "cursor-position",
   "title": "cursor-position",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Simple module for getting the current mouse position in element or window.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "mocha -r ts-node/register src/test.ts"
+    "prepack": "npm run build",
+    "test": "npm run build && node --test src/test.js"
   },
   "keywords": [
     "cursor",
@@ -42,15 +43,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/jsdom": "^12.2.1",
-    "@types/mocha": "^5.2.5",
-    "chai": "^4.2.0",
     "jsdom": "^13.1.0",
-    "jsdom-global": "^3.0.2",
-    "mocha": "^5.2.0",
-    "mocha.parallel": "^0.15.6",
-    "ts-node": "^7.0.1",
     "typescript": "^3.2.2"
   }
 }
